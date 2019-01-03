@@ -6,11 +6,17 @@ class App extends Component {
   constructor(){
     super();
     this.state={
-      apidata : "data from youtube......"
+      apidata : []
     }
   }
   onsearch=()=>{
-    console.log(this.refs.searchtext.value)
+    fetch("https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyAvaEX0RtArjGSkbJ7opxRTWeagwC9dEHQ&maxResults=5&type=video&q="+this.refs.searchtext.value)
+    .then((res)=>res.json())
+    .then((res)=>{
+      this.setState({apidata:res.items.map((key)=>"https://www.youtube.com/embed/"+key.id.videoId)})
+      console.log(this.state)
+    })
+    //console.log(this.refs.searchtext.value)
   }
   render() {
     return (
@@ -18,11 +24,8 @@ class App extends Component {
       <div>
        <input ref="searchtext" type="text" placeholder="enter keyword"/>
        <button onClick={()=>this.onsearch()}>SEARCH</button>
-       </div>
-       <iframe width="560" height="315" src="https://www.youtube.com/embed/CIIW0qm6H80" 
-       frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen></iframe>
-      
+       </div>       
+      {this.state.apidata.map((key, id)=><iframe width="400" height="315" key={id} src={key} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>)}
       </div>
     );
   }
